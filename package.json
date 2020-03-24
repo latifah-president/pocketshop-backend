@@ -1,0 +1,35 @@
+{
+  "name": "pocketshop-backend",
+  "version": "1.0.0",
+  "description": "Pocket Shop is a platform created by Cloud5 that gives small bussinesses the opportunity to offer delivery services to their customers.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloud5innovation/pocketshop-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cloud5innovation/pocketshop-backend/issues"
+  },
+  "homepage": "https://github.com/cloud5innovation/pocketshop-backend#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^8.10.0",
+    "helmet": "^3.21.3",
+    "knex": "^0.20.13",
+    "morgan": "^1.10.0",
+    "pg": "^7.18.2",
+    "stripe": "^8.33.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
