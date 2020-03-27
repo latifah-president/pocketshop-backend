@@ -16,7 +16,7 @@ getUsers = () => {
       )
 };
 
-getUsers = () => {
+getUsersByType = (user_type) => {
     return db('user').select(
       'firebase_id', 
       'email', 

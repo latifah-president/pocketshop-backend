@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Pocket Shop is a platform created by Cloud5 that gives small bussinesses the opportunity to offer delivery services to their customers.",
   "main": "index.js",
+  "engines" :{
+    "node": "12.6.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon index.js"
