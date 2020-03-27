@@ -1,24 +1,25 @@
 
 exports.up = function(knex, Promise) {
     return knex.schema.createTable('order', order => {
-        order.increments();
-        // order
-        // .string('vendor_id')
-        // .unsigned()
-        // .notNullable()
-        // .references('firebase_id')
-        // .inTable('vendor')
-        // order.integer('product_id')
-        // .unsigned()
-        // .notNullable()
-        // .references('id')
-        // .inTable('product');
-        // order.integer('customer_id')
-        // .unsigned()
-        // .notNullable()
-        // .references('firebase_id')
-        // .inTable('customer');
+        order.increments().primary();
+        order
+        .string('vendor_id')
+        .unsigned()
+        .notNullable()
+        .references('firebase_id')
+        .inTable('vendor')
+        order.integer('product_id')
+        .unsigned()
+        .notNullable()
+        .references('id')
+        .inTable('product');
+        order.string('customer_id')
+        .unsigned()
+        .notNullable()
+        .references('firebase_id')
+        .inTable('customer');
         order.float('order_total');
+        order.timestamp('created_at').defaultTo(knex.fn.now());
     })
   };
   
