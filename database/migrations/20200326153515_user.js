@@ -4,7 +4,7 @@ exports.up = function(knex) {
       user.increments();
       user.string('email').notNullable().unique();
       user.string('firebase_id').primary().notNullable().unique();
-      user.enu('user_type', ['market', 'vendor']);
+      user.enu('user_type', ['customers', 'vendor']);
       user.string('first_name');
       user.string('last_name');
       user.string('street_address');

@@ -14,7 +14,7 @@ getUsers = () => {
       'country',
       'phone_number'
       )
-};
+}; // pocket shop admin 
 
 getUsersByType = (user_type) => {
     return db('user').select(
@@ -30,7 +30,7 @@ getUsersByType = (user_type) => {
       'country',
       'phone_number'
       )
-};
+}; 
 
 getUserById = (firebase_id, user_type) => {
     //TODO: PASS USER TYPE AS AN ARG THEN INNER JOIN THAT USER TYPE TABLE
