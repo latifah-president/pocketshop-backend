@@ -7,7 +7,7 @@ const User = require('./../models/users');
 //useEffect to update stripe_id for vendor
 
 //1. vendor registers at /vendor/register this will allow us to set the user type automatically
-//2. vendor clickes continue button on vendor registration form and will be directed to the stripe express on boarding screen if our  
+//2. vendor clicks continue button on vendor registration form and will be directed to the stripe express on boarding screen if our  
 // res.status to /vendor/register  === 201
 //3. once on boarding is completed we now have our stripe_id for the vendor
 //4. stripe will redirect us to our profile route vendor/:id
