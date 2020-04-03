@@ -18,7 +18,7 @@ exports.authorize = (req, res) => {
     // Optionally, the Express onboarding flow accepts `first_name`, `last_name`, `email`,
     // and `phone` in the query parameters: those form fields will be prefilled
     parameters = Object.assign(parameters, {
-      redirect_uri: `http://localhost:${process.env.PORT}` + '/stripe/token',
+      redirect_uri: `${process.env.BACKEND_URL}` + '/stripe/token',
       'stripe_user[business_type]': req.query.type || 'individual',
       'stripe_user[business_name]': req.query.first_name || undefined,
       'stripe_user[first_name]': req.query.first_name || undefined,
