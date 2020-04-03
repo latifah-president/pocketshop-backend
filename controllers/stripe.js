@@ -91,6 +91,7 @@ exports.authorize = (req, res) => {
       });
       
       var connected_account_id = response.stripe_user_id;
+      console.log('connected user',connected_account_id)
       // const expressAuthorized = await request.post({
       //   uri: process.env.STRIPE_TOKEN_URI, 
       //   form: { 
