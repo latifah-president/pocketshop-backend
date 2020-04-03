@@ -83,9 +83,8 @@ exports.authorize = (req, res) => {
     // }
     // Post the authorization code to Stripe to complete the Express onboarding flow
     console.log('req.query', req.query)
-      request.post(
-        process.env.STRIPE_TOKEN_URI,
-        {
+      request.post({
+          uri: process.env.STRIPE_TOKEN_URI,
           form: {
             grant_type: 'authorization_code',
             client_id: process.env.STRIPE_CLIENT_ID,
