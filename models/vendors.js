@@ -1,30 +1,42 @@
 const db = require('./../dbconfig');
 
 getVendorById = (firebase_id) => {
-    return db('vendor')
-    .innerJoin('user', 'vendor.firebase_id', 'user.firebase_id')
+    return db('user')
+    .innerJoin('vendor', 'user.firebase_id', 'vendor.firebase_id')
     .select(
-        'user.email',
-        'user.firebase_id',
-        'user.user_type',
-        'user.first_name', 
-        'user.last_name', 
-        'user.street_address', 
-        'user.city', 
-        'user.state', 
-        'user.zip', 
-        'user.country',
-        'user.phone_number', 
-        'vendor.stripe_id', 
-        'vendor.firebase_id')
-    .where({ 'vendor.firebase_id': firebase_id })
+      'vendor.stripe_id', 
+      'user.email', 
+      'user.firebase_id', 
+      'user.first_name', 
+      'user.last_name', 
+      'user.user_type', 
+      'user.street_address', 
+      'user.city', 
+      'user.state', 
+      'user.zip', 
+      'user.country', 
+      'user.phone_number',)
+    .where({ 'user.firebase_id': firebase_id })
     .first();
   };
 
-addVendor = (vendor) => {
-    return db('vendor').insert(vendor);
-  }
+// addVendor = (vendor) => {
+//     return db('vendor').insert(vendor);
+//   }
 
+async function addVendor(firebase_id) {
+  try {
+     let addedVendor = {
+    firebase_id: firebase_id
+  };
+    const [id] = await db('vendor')
+      .insert(addedVendor)
+      .returning('id');
+    return getVendorById(id);
+  } catch (err) {
+    console.log(err);
+  }
+};
   updateVendor = (firebase_id, changes) => {
     return db('vendor').where({firebase_id: firebase_id}).update(changes);
   }

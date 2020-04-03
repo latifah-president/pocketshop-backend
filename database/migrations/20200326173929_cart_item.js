@@ -4,7 +4,6 @@ exports.up = function(knex, Promise) {
         cart_item.increments();
         cart_item
           .string('cart_id')
-          .primary()
           .unsigned()
           .notNullable()
           .references('firebase_id')

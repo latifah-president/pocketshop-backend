@@ -7,4 +7,4 @@ router.get('/token', stripeControllers.token);
 router.get('/dashboard', stripeControllers.dashboard);
 router.post('/payout', stripeControllers.payout);
 
-module.exports = router
+module.exports = router;

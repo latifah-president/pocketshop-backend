@@ -3,8 +3,8 @@ exports.up = function(knex) {
   return knex.schema.createTable('user', user => {
       user.increments();
       user.string('email').notNullable().unique();
-      user.string('firebase_id').primary().notNullable().unique();
-      user.enu('user_type', ['customers', 'vendor']);
+      user.string('firebase_id').notNullable().unique();
+      user.enu('user_type', ['customer', 'vendor']);
       user.string('first_name');
       user.string('last_name');
       user.string('street_address');

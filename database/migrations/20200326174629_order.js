@@ -3,7 +3,7 @@ exports.up = function(knex, Promise) {
     return knex.schema.createTable('order', order => {
         order.increments().primary();
         order
-        .string('vendor_id')
+        .string('Vendor_id')
         .unsigned()
         .notNullable()
         .references('firebase_id')

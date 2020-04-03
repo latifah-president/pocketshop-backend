@@ -5,6 +5,7 @@ const querystring = require('querystring');
 const request = require('request');
 
 exports.authorize = (req, res) => {
+  console.log(req.query, 'stripe')
     // Generate a random string as `state` to protect from CSRF and include it in the session
     // req.session.state = Math.random()
     //   .toString(36)
@@ -18,16 +19,16 @@ exports.authorize = (req, res) => {
     // and `phone` in the query parameters: those form fields will be prefilled
     parameters = Object.assign(parameters, {
       redirect_uri: `http://localhost:${process.env.PORT}` + '/stripe/token',
-      'stripe_user[business_type]': req.body.type || 'individual',
-      'stripe_user[business_name]': req.body.vendor_name || undefined,
-      'stripe_user[first_name]': req.body.first_name || undefined,
-      'stripe_user[last_name]': req.body.last_name || undefined,
-      'stripe_user[email]': req.body.email || undefined,
-      'stripe_user[street_address]': req.body.street_address || undefined,
-      'stripe_user[city]': req.body.city || undefined,
-      'stripe_user[state]': req.body.state || undefined,
-      'stripe_user[zip]': req.body.zip || undefined,
-      'stripe_user[country]': req.body.country || undefined,
+      'stripe_user[business_type]': req.query.type || 'individual',
+      'stripe_user[business_name]': req.query.first_name || undefined,
+      'stripe_user[first_name]': req.query.first_name || undefined,
+      'stripe_user[last_name]': req.query.last_name || undefined,
+      'stripe_user[email]': req.query.email || undefined,
+      'stripe_user[street_address]': req.query.street_address || undefined,
+      'stripe_user[city]': req.query.city || undefined,
+      'stripe_user[state]': req.query.state || undefined,
+      'stripe_user[zip]': req.query.zip || undefined,
+      'stripe_user[country]': req.query.country || undefined,
       'suggested_capabilities[]': 'card_payments',
     });
     console.log('Starting Express flow:', parameters);

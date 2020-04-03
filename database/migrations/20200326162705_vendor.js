@@ -3,7 +3,6 @@ exports.up = function(knex) {
     return knex.schema.createTable('vendor', vendor  => {
         vendor.increments();
         vendor.string('firebase_id')
-            .primary()
             .unsigned()
             .unique()
             .notNullable()

@@ -1,6 +1,7 @@
 const User = require('./../models/users');
 const Vendor = require('./../models/vendors');
-
+const Cart = require('./../models/cart');
+const Customer = require('./../models/customers');
 
 exports.getUsers = async (req, res) => {
     try {
@@ -26,7 +27,7 @@ exports.getUserById = async (req, res) => {
         } else {
 
             const userData = await User.getUserById(firebase_id, user_type);
-            console.log(req.params, 'bottom of await')
+            console.log(userData, 'bottom of await')
             res.status(200).json(userData);
         } 
     } catch(err) {
@@ -37,20 +38,17 @@ exports.getUserById = async (req, res) => {
 
 exports.addUser = async (req, res) => {
     try {
-        
-        const {email, user_type, firebase_id, first_name, last_name, street_address, city, state, zip, country, phone_number} = req.body;
-        if (!email || !firebase_id || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number  ) {
+        const {firebase_id, email, user_type,  first_name, last_name, street_address, city, state, zip, country, phone_number} = req.body;
+        if (!firebase_id || !email || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number  ) {
             res.status(400).json(`Please enter all input fields`);
-
         } else {
-            console.log(firebase_id, 'req.body for register')
-
             const newUser = await User.addUser(req.body);
-            // const newVendor = await Vendor.addVendor(req.body.firebase_id)
-            // const cart = await Cart.addCart(firebase_id);
+            const newCustomer = await Customer.addCustomer(firebase_id);
+            const cart = await Cart.addCart(firebase_id);
+            console.log(newCustomer, 'user from register')
             res.status(201).json(`Welcome ${first_name}`);
-        // }
-    } }catch(err) {
+    } 
+ }catch(err) {
         res.status(500).json(`There was an error adding you information`);
         console.log(`error from addUser: ${err}`)
     }

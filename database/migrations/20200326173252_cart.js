@@ -4,13 +4,12 @@ exports.up = function(knex, Promise) {
         cart.increments();
         cart
         .string('firebase_id')
-        .primary()
         .unsigned()
         .notNullable()
         .references('firebase_id')
         .inTable('customer')
         .unique();
-        cart.decimal('total').unsigned();
+        cart.decimal('total').unsigned().defaultTo(0.00);
         cart.integer('quantity').defaultTo(0);
     })
   };
