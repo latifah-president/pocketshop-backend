@@ -82,22 +82,29 @@ exports.authorize = (req, res) => {
     //   res.redirect('/pilots/signup');
     // }
     // Post the authorization code to Stripe to complete the Express onboarding flow
+    
     try {
 
-      const expressAuthorized = await request.post({
-        uri: process.env.STRIPE_TOKEN_URI, 
-        form: { 
-          grant_type: 'authorization_code',
-          client_id: process.env.STRIPE_CLIENT_ID,
-          client_secret: process.env.STRIPE_SK,
-          code: req.query.code
-        },
-        json: true
+      const response = await stripe.oauth.token({
+        grant_type: 'authorization_code',
+        code: req.body.code,
       });
+      
+      var connected_account_id = response.stripe_user_id;
+      // const expressAuthorized = await request.post({
+      //   uri: process.env.STRIPE_TOKEN_URI, 
+      //   form: { 
+      //     grant_type: 'authorization_code',
+      //     client_id: process.env.STRIPE_CLIENT_ID,
+      //     client_secret: process.env.STRIPE_SK,
+      //     code: req.query.code
+      //   },
+      //   json: true
+      // });
 
-      if(expressAuthorized.error) {
-        throw(expressAuthorized.error)
-      }
+      // if(expressAuthorized.error) {
+      //   throw(expressAuthorized.error)
+      // }
     } catch (err) {
         console.log('The Stripe onboarding process has not succeeded.', err)
     }
