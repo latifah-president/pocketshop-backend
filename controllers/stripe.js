@@ -84,6 +84,7 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
     //   res.redirect('/pilots/signup');
     // }
     try {
+      console.log("code", req.query)
       // Post the authorization code to Stripe to complete the Express onboarding flow
       const expressAuthorized = await request.post({
         uri: process.env.STRIPE_TOKEN_URI,
@@ -101,7 +102,7 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
       }
   
     } catch (err) {
-      console.log('The Stripe onboarding process has not succeeded.');
+      console.log('The Stripe onboarding process has not succeeded.', err);
       // next(err);
     }
     
