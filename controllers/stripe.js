@@ -85,8 +85,9 @@ exports.authorize = (req, res) => {
     
       console.log("code:", req.query.code)
       try {
-        request.post({
-          uri: process.env.STRIPE_TOKEN_URI,
+        request.post(
+          process.env.STRIPE_TOKEN_URI,
+          {
           form: {
             grant_type: 'authorization_code',
             client_id: process.env.STRIPE_CLIENT_ID,
