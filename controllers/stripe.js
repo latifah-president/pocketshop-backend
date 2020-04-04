@@ -89,9 +89,12 @@ exports.authorize = (req, res) => {
         grant_type: 'authorization_code',
         client_id: process.env.STRIPE_CLIENT_ID,
         client_secret: process.env.STRIPE_SK,
-        code: req.query.code,
+        code: req.body.code,
       });
       
+      if(response) {
+        res.status(200).json( response.stripe_user_id)
+      }
       var connected_account_id = response.stripe_user_id;
       console.log('connected user',connected_account_id)
       // const expressAuthorized = await request.post({
