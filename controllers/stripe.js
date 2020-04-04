@@ -76,7 +76,7 @@ exports.authorize = (req, res) => {
 // };
 
    //Martket Token 
-   exports.token = async (req, res) => { //put request to update vendor stripeid
+   exports.token = async (req, res, next) => { //put request to update vendor stripeid
     // Check the `state` we got back equals the one we generated before proceeding (to protect from CSRF)
     // if (req.session != req.query.state) {
     //   res.redirect('/pilots/signup');
