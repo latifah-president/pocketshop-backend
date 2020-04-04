@@ -86,20 +86,33 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
     try {
       console.log("code", req.query)
       // Post the authorization code to Stripe to complete the Express onboarding flow
-      const expressAuthorized = await request.post({
-        uri: process.env.STRIPE_TOKEN_URI,
-        form: { 
+      // const expressAuthorized = await request.post({
+      //   uri: process.env.STRIPE_TOKEN_URI,
+      //   form: { 
+      //     grant_type: 'authorization_code',
+      //     client_id: process.env.STRIPE_CLIENT_ID,
+      //     client_secret: process.env.STRIPE_SK,
+      //     code: req.query.code
+      //   },
+      //   json: true
+      // });
+  
+      // if (expressAuthorized.error) {
+      //   throw(expressAuthorized.error);
+      // }
+
+      const response = await stripe.oauth.token({
           grant_type: 'authorization_code',
           client_id: process.env.STRIPE_CLIENT_ID,
           client_secret: process.env.STRIPE_SK,
           code: req.query.code
-        },
-        json: true
-      });
-  
-      if (expressAuthorized.error) {
-        throw(expressAuthorized.error);
-      }
+        });
+        
+        if(response) {
+          res.send(`User Connected`)
+        }
+        var connected_account_id = response.stripe_user_id;
+        console.log('connected user',connected_account_id)
   
     } catch (err) {
       console.log('The Stripe onboarding process has not succeeded.', err);
