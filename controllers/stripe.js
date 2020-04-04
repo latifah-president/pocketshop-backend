@@ -85,21 +85,45 @@ exports.authorize = (req, res) => {
     
       console.log("code:", req.query.code)
       try {
-        // Post the authorization code to Stripe to complete the Express onboarding flow
-        const expressAuthorized = await request.post({
-          uri: process.env.STRIPE_TOKEN_URI, 
-          form: { 
+        request.post({
+          uri: process.env.STRIPE_TOKEN_URI,
+          form: {
             grant_type: 'authorization_code',
             client_id: process.env.STRIPE_CLIENT_ID,
             client_secret: process.env.STRIPE_SK,
-            code: req.query.code
+            code: req.query.code,
           },
-          json: true
-        });
-    
-        if (expressAuthorized.error) {
-          throw(expressAuthorized.error);
+          json: true,
+        },
+        (err, response, body) => {
+          if (err || body.error) {
+            console.log('The Stripe onboarding process has not succeeded.');
+            console.log('err', err, body)
+          } else {
+            // Update the model and store the Stripe account ID in the datastore:
+            // this Stripe account ID will be used to issue payouts to the pilot
+            // req.user.stripeAccountId = body.stripe_user_id;
+            // req.user.save();
+            // res.status(200).json(response)
+            console.log('success!')
+          }
         }
+      );
+        // Post the authorization code to Stripe to complete the Express onboarding flow
+        // const expressAuthorized = await request.post({
+        //   uri: process.env.STRIPE_TOKEN_URI, 
+        //   form: { 
+        //     grant_type: 'authorization_code',
+        //     client_id: process.env.STRIPE_CLIENT_ID,
+        //     client_secret: process.env.STRIPE_SK,
+        //     code: req.query.code
+        //   },
+        //   json: true
+        // });
+    
+        // if (expressAuthorized.error) {
+        //   throw(expressAuthorized.error);
+        // }
     
       } catch (err) {
         console.log('The Stripe onboarding process has not succeeded.', err);
@@ -135,30 +159,7 @@ exports.authorize = (req, res) => {
       // }
      
     
-      // request.post({
-      //     uri: process.env.STRIPE_TOKEN_URI,
-      //     form: {
-      //       grant_type: 'authorization_code',
-      //       client_id: process.env.STRIPE_CLIENT_ID,
-      //       client_secret: process.env.STRIPE_SK,
-      //       code: req.query.code,
-      //     },
-      //     json: true,
-      //   },
-      //   (err, response, body) => {
-      //     if (err || body.error) {
-      //       console.log('The Stripe onboarding process has not succeeded.');
-      //       console.log('err', err, body)
-      //     } else {
-      //       // Update the model and store the Stripe account ID in the datastore:
-      //       // this Stripe account ID will be used to issue payouts to the pilot
-      //       // req.user.stripeAccountId = body.stripe_user_id;
-      //       // req.user.save();
-      //       res.status(200).json(response)
-      //       console.log('success!')
-      //     }
-      //   }
-      // );
+     
 
   };
 
