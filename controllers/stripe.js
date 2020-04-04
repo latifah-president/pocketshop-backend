@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const stripe = require('stripe')(process.env.STRIPE_SK);
 const querystring = require('querystring');
-const request = require('equest-promise-native');
+const request = require('request-promise-native');
 
 exports.authorize = (req, res) => {
   console.log(req.query, 'stripe')
