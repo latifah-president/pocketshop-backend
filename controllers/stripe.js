@@ -103,7 +103,7 @@ exports.authorize = (req, res) => {
     
       } catch (err) {
         console.log('The Stripe onboarding process has not succeeded.');
-        next(err);
+        // next(err);
       }
       // console.log("code:",req.body)
       // const response = await stripe.oauth.token({
