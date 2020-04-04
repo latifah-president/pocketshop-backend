@@ -84,7 +84,7 @@ exports.authorize = (req, res) => {
     // Post the authorization code to Stripe to complete the Express onboarding flow
     
     try {
-
+      console.log(req.body.code)
       const response = await stripe.oauth.token({
         grant_type: 'authorization_code',
         client_id: process.env.STRIPE_CLIENT_ID,
@@ -93,7 +93,7 @@ exports.authorize = (req, res) => {
       });
       
       if(response) {
-        res.status(200).json( response.stripe_user_id)
+        res.send(`User Connected`)
       }
       var connected_account_id = response.stripe_user_id;
       console.log('connected user',connected_account_id)
