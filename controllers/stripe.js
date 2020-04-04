@@ -83,20 +83,42 @@ exports.authorize = (req, res) => {
     // }
     // Post the authorization code to Stripe to complete the Express onboarding flow
     
-    try {
-      console.log("code:",req.body)
-      const response = await stripe.oauth.token({
-        grant_type: 'authorization_code',
-        client_id: process.env.STRIPE_CLIENT_ID,
-        client_secret: process.env.STRIPE_SK,
-        code: req.body.code,
-      });
-      
-      if(response) {
-        res.send(`User Connected`)
+      console.log("code:", req.query.code)
+      try {
+        // Post the authorization code to Stripe to complete the Express onboarding flow
+        const expressAuthorized = await request.post({
+          uri: process.env.STRIPE_TOKEN_URI, 
+          form: { 
+            grant_type: 'authorization_code',
+            client_id: process.env.STRIPE_CLIENT_ID,
+            client_secret: process.env.STRIPE_SK,
+            code: req.query.code
+          },
+          json: true
+        });
+    
+        if (expressAuthorized.error) {
+          throw(expressAuthorized.error);
+        }
+    
+      } catch (err) {
+        console.log('The Stripe onboarding process has not succeeded.');
+        next(err);
       }
-      var connected_account_id = response.stripe_user_id;
-      console.log('connected user',connected_account_id)
+      // console.log("code:",req.body)
+      // const response = await stripe.oauth.token({
+      //   grant_type: 'authorization_code',
+      //   client_id: process.env.STRIPE_CLIENT_ID,
+      //   client_secret: process.env.STRIPE_SK,
+      //   code: req.body.code,
+      // });
+      
+      // if(response) {
+      //   res.send(`User Connected`)
+      // }
+      // var connected_account_id = response.stripe_user_id;
+      // console.log('connected user',connected_account_id)
+
       // const expressAuthorized = await request.post({
       //   uri: process.env.STRIPE_TOKEN_URI, 
       //   form: { 
@@ -111,9 +133,7 @@ exports.authorize = (req, res) => {
       // if(expressAuthorized.error) {
       //   throw(expressAuthorized.error)
       // }
-    } catch (err) {
-        console.log('The Stripe onboarding process has not succeeded.', err)
-    }
+     
     
       // request.post({
       //     uri: process.env.STRIPE_TOKEN_URI,
