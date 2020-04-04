@@ -84,7 +84,7 @@ exports.authorize = (req, res) => {
     // Post the authorization code to Stripe to complete the Express onboarding flow
     
       console.log("code:", req.query.code)
-      try {
+      // try {
         request.post(
           process.env.STRIPE_TOKEN_URI,
           {
@@ -98,6 +98,7 @@ exports.authorize = (req, res) => {
         },
         (err, response, body) => {
           if (err || body.error) {
+            console.log("response from token",response)
             console.log('The Stripe onboarding process has not succeeded.');
             console.log('err', err, body)
           } else {
@@ -126,10 +127,10 @@ exports.authorize = (req, res) => {
         //   throw(expressAuthorized.error);
         // }
     
-      } catch (err) {
-        console.log('The Stripe onboarding process has not succeeded.', err);
-        // next(err);
-      }
+      // } catch (err) {
+      //   console.log('The Stripe onboarding process has not succeeded.', err);
+      //   // next(err);
+      // }
       // console.log("code:",req.body)
       // const response = await stripe.oauth.token({
       //   grant_type: 'authorization_code',
