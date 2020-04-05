@@ -24,10 +24,11 @@ getVendorById = (firebase_id) => {
 //     return db('vendor').insert(vendor);
 //   }
 
-async function addVendor(firebase_id) {
+async function addVendor(firebase_id, vendor_name) {
   try {
      let addedVendor = {
-    firebase_id: firebase_id
+    firebase_id: firebase_id,
+    vendor_name: vendor_name
   };
     const [id] = await db('vendor')
       .insert(addedVendor)

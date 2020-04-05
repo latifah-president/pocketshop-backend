@@ -32,14 +32,32 @@ exports.getVendorById = async (req, res) => {
 
 exports.addVendor = async (req, res) => {
   try {
-      const {firebase_id, email, user_type,  first_name, last_name, street_address, city, state, zip, country, phone_number} = req.body;
+      const {firebase_id, email, user_type,  first_name, last_name, street_address, city, state, zip, country, phone_number, vendor_name} = req.body;
+      const userData = {
+        firebase_id, 
+        email, 
+        user_type,  
+        first_name, 
+        last_name, 
+        street_address, 
+        city, 
+        state, 
+        zip, 
+        country, 
+        phone_number
+      }
+      console.log("userData:", userData.phone_number)
       if (!firebase_id || !email || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number  ) {
           res.status(404).json(`Please enter all input fields`);
       } else {
-          const newUser = await User.addUser(req.body);
-          const newCustomer = await Vendor.addVendor(firebase_id);
-          console.log(newCustomer, 'user from vendor register')
-          res.status(201).json(`Welcome ${first_name}`);
+          const newUser = await User.addUser(userData);
+        if(newUser) {
+          const newVendor = await Vendor.addVendor(firebase_id, vendor_name);
+          
+          console.log(newVendor, 'user from vendor register')
+        }
+        res.status(201).json(`Welcome ${first_name}`);
+
   } 
 }catch(err) {
       res.status(500).json(`There was an error adding you information`);

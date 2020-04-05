@@ -20,7 +20,7 @@ exports.authorize = (req, res) => {
     parameters = Object.assign(parameters, {
       redirect_uri: `${process.env.BACKEND_URL}` + '/stripe/token',
       'stripe_user[business_type]': req.query.type || 'individual',
-      'stripe_user[business_name]': req.query.first_name || undefined,
+      'stripe_user[business_name]': req.query.vendor_name || undefined,
       'stripe_user[first_name]': req.query.first_name || undefined,
       'stripe_user[last_name]': req.query.last_name || undefined,
       'stripe_user[email]': req.query.email || undefined,
@@ -28,7 +28,7 @@ exports.authorize = (req, res) => {
       'stripe_user[city]': req.query.city || undefined,
       'stripe_user[state]': req.query.state || undefined,
       'stripe_user[zip]': req.query.zip || undefined,
-      'stripe_user[country]': req.query.country || undefined,
+      'stripe_user[country]': req.query.country || 'US',
       'suggested_capabilities[]': 'card_payments',
     });
     console.log('Starting Express flow:', parameters);
