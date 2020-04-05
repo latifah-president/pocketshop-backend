@@ -3,6 +3,7 @@ require('dotenv').config()
 const stripe = require('stripe')(process.env.STRIPE_SK);
 const querystring = require('querystring');
 const request = require('request-promise-native');
+const Vendor = require('./../models/vendors');
 
 exports.authorize = (req, res) => {
   console.log(req.query, 'stripe')
@@ -39,44 +40,6 @@ exports.authorize = (req, res) => {
         process.env.STRIPE_AUTH_URI + '?' + querystring.stringify(parameters)
     );
   };
-  
-// exports.authorize = async (req, res) => { //begin stripe onboarding
-//     res.send('stripe controller')
-//     console.log(req.body, 'from stripe')
-//     console.log(req.params, 'params from authorize')
-//     console.log('requster', req.user)
-    
-//       let parameters = {
-//           client_id: process.env.STRIPE_CLIENT_ID,
-         
-//         }
-//         parameters = Object.assign(parameters, {
-//           redirect_uri: `http://localhost:${process.env.PORT}` + '/stripe/token',
-//           'stripe_user[business_type]': req.body.type || 'individual',
-//           'stripe_user[business_name]': req.body.vendor_name || undefined,
-//           'stripe_user[first_name]': req.body.first_name || undefined,
-//           'stripe_user[last_name]': req.body.last_name || undefined,
-//           'stripe_user[email]': req.body.email || undefined,
-//           'stripe_user[street_address]': req.body.street_address || undefined,
-//           'stripe_user[city]': req.body.city || undefined,
-//           'stripe_user[state]': req.body.state || undefined,
-//           'stripe_user[zip]': req.body.zip || undefined,
-//           'stripe_user[country]': req.body.country || undefined,
-//           'stripe_user[phone_number]': req.body.phone_number || undefined,
-//           'suggested_capabilities[]': 'card_payments',
-//         }),
-//         console.log('Starting Express flow:', parameters);
-//         // Redirect to Stripe to start the Express onboarding flow
-//         // console.log(process.env.STRIPE_AUTH_URI + '?' + querystring.stringify(parameters))
-//         // res.status(200).redirect(process.env.STRIPE_AUTH_URI + '?' + querystring.stringify(parameters))
-//         res.redirect(
-//             process.env.STRIPE_AUTH_URI + '?' + querystring.stringify(parameters)
-//           );
-    
-// };
-
-
-
 
 exports.token = async (req, res, next) => { //put request to update vendor stripeid
     // Check the `state` we got back equals the one we generated before proceeding (to protect from CSRF)
@@ -109,98 +72,19 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
         });
         
         if(response) {
-          res.send(`User Connected`)
+          res.send(`User Connected from backend`)
+          console.log("response from token:", response)
+          const connected_account_id = response.stripe_user_id;
+          console.log()
+          const vendor = await Vendor.updateVendor({stripe_id: connected_account_id})
+          console.log("vendor stripe account has been added")
         }
-        var connected_account_id = response.stripe_user_id;
-        console.log('connected user',connected_account_id)
   
     } catch (err) {
       console.log('The Stripe onboarding process has not succeeded.', err);
       // next(err);
     }
-    
-      // try{
-      //   request.post(
-      //     process.env.STRIPE_TOKEN_URI,
-      //     {
-      //       form: {
-      //         grant_type: 'authorization_code',
-      //         client_id: process.env.STRIPE_CLIENT_ID,
-      //         client_secret: process.env.STRIPE_SK,
-      //         code: req.query.code,
-      //       },
-      //       json: true,
-      //     },
-      //     (err, response, body) => {
-      //       if (err || body.error) {
-      //         console.log('The Stripe onboarding process has not succeeded.');
-      //         console.log('err', err, body)
-      //       } else {
-      //         // Update the model and store the Stripe account ID in the datastore:
-      //         // this Stripe account ID will be used to issue payouts to the pilot
-      //         // req.user.stripeAccountId = body.stripe_user_id;
-      //         // req.user.save();
-      //         res.status(200).json(response)
-      //         console.log('success!')
-      //       }
-      //       // Redirect to the Rocket Rides dashboard
-      //       // req.flash('showBanner', 'true');
-      //       // res.redirect('/');
-      //     }
-      //   );
-      // } catch (err) {
-      //   console.log("stripe token error", err)
-      // }
-   
-        // Post the authorization code to Stripe to complete the Express onboarding flow
-        // const expressAuthorized = await request.post({
-        //   uri: process.env.STRIPE_TOKEN_URI, 
-        //   form: { 
-        //     grant_type: 'authorization_code',
-        //     client_id: process.env.STRIPE_CLIENT_ID,
-        //     client_secret: process.env.STRIPE_SK,
-        //     code: req.query.code
-        //   },
-        //   json: true
-        // });
-    
-        // if (expressAuthorized.error) {
-        //   throw(expressAuthorized.error);
-        // }
-    
-      // } catch (err) {
-      //   console.log('The Stripe onboarding process has not succeeded.', err);
-      //   // next(err);
-      // }
-      // console.log("code:",req.body)
-      // const response = await stripe.oauth.token({
-      //   grant_type: 'authorization_code',
-      //   client_id: process.env.STRIPE_CLIENT_ID,
-      //   client_secret: process.env.STRIPE_SK,
-      //   code: req.body.code,
-      // });
-      
-      // if(response) {
-      //   res.send(`User Connected`)
-      // }
-      // var connected_account_id = response.stripe_user_id;
-      // console.log('connected user',connected_account_id)
-
-      // const expressAuthorized = await request.post({
-      //   uri: process.env.STRIPE_TOKEN_URI, 
-      //   form: { 
-      //     grant_type: 'authorization_code',
-      //     client_id: process.env.STRIPE_CLIENT_ID,
-      //     client_secret: process.env.STRIPE_SK,
-      //     code: req.query.code
-      //   },
-      //   json: true
-      // });
-
-      // if(expressAuthorized.error) {
-      //   throw(expressAuthorized.error)
-      // }
-     };
+  };
 
   exports.dashboard = async (req, res) => {
     const {stripe_id} = req.body

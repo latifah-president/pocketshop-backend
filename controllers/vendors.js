@@ -47,7 +47,7 @@ exports.addVendor = async (req, res) => {
         phone_number
       }
       console.log("userData:", userData.phone_number)
-      if (!firebase_id || !email || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number  ) {
+      if (!firebase_id || !email || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number || !vendor_name ) {
           res.status(404).json(`Please enter all input fields`);
       } else {
           const newUser = await User.addUser(userData);
