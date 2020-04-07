@@ -136,7 +136,7 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
       const balance = await stripe.balance.retrieve({
         stripe_account: stripe_id,
       });
-      // (Note: there is one balance for each currency used in your application)
+      // there is one balance for each currency used in application
       const {amount, currency} = balance.available[0];
       // Create an instant payout
       const payout = await stripe.payouts.create(
