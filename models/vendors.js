@@ -5,6 +5,7 @@ getVendorById = (firebase_id) => {
     .innerJoin('vendor', 'user.firebase_id', 'vendor.firebase_id')
     .select(
       'vendor.stripe_id', 
+      'vendor.vendor_name',
       'user.email', 
       'user.firebase_id', 
       'user.first_name', 

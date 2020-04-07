@@ -10,7 +10,8 @@ exports.up = function(knex) {
             .inTable('user')
             .onUpdate('CASCADE');
         vendor.string('stripe_id'); //might have to change this back to stripeAccountId
-        vendor.string('vendor_name');
+        vendor.string('vendor_name').unique();
+        vendor.string('logo_url');
     })
 };
 

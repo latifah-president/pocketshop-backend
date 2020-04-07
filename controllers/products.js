@@ -2,14 +2,18 @@ const Products = require('../models/products');
 
 exports.getProductsByVendor = async (req, res) => {
     try {
-        const {vendor_id} = req.params;
-        console.log("Vendor id,", vendor_id);
-        if (!vendor_id) {
+        const {vendor_name} = req.params;
+        console.log("Vendor id,", vendor_name);
+        if (!vendor_name) {
           res.status(404).json({ errorMessage: 'No vendor found' });
         } else {
-          const productsData = await Products.getProductsByVendor(vendor_id);
-          console.log("Products Data:", productsData);
-          res.status(200).json(productsData);
+          const productsData = await Products.getProductsByVendorName(vendor_name);
+          if (productsData.length === 0) {
+            res.status(404).json(`${vendor_name} has not added any products`)
+          } else {
+            console.log("Products Data:", productsData);
+            res.status(200).json(productsData);
+          }
         }
       } catch (err) {
         res.status(500).json(`No products found: ${err}`);
@@ -25,7 +29,8 @@ exports.addProductByVendorId = async (req, res) => {
           price: req.body.price,
           image_url: req.body.image_url,
           category: req.body.category,
-          vendor_id: req.body.vendor_id
+          vendor_id: req.body.vendor_id,
+          business_name: req.body.business_name,
       }
       if (!product.vendor_id || !product.title || !product.description || !product.price || !product.image_url || !product.category) {
         res.status(404).json({ message: `Enter All Fields` });

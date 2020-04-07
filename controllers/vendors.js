@@ -21,7 +21,7 @@ exports.getVendorById = async (req, res) => {
       } else {
           console.log(firebase_id,'id')
           const customerData = await Vendor.getVendorById(firebase_id)
-          console.log(customerData, 'bottom of await')
+          console.log(customerData, 'bottom of await from vendor by id')
           res.status(200).json(customerData);
       }
   } catch(err) {

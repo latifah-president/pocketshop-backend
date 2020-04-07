@@ -14,6 +14,13 @@ exports.up = function(knex, Promise) {
         .references('firebase_id')
         .inTable('vendor')
         .onUpdate('CASCADE');
+        product
+        .string('business_name')
+        .unsigned()
+        .notNullable()
+        .references('vendor_name')
+        .inTable('vendor')
+        .onUpdate('CASCADE');
     });
   };
   

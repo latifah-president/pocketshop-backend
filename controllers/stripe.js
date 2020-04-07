@@ -19,7 +19,7 @@ exports.authorize = (req, res) => {
     // Optionally, the Express onboarding flow accepts `first_name`, `last_name`, `email`,
     // and `phone` in the query parameters: those form fields will be prefilled
     parameters = Object.assign(parameters, {
-      redirect_uri: `${process.env.BACKEND_URL}` + '/stripe/token',
+      redirect_uri: `http://localhost:8585/` + '/stripe/token',
       'stripe_user[business_type]': req.query.type || 'individual',
       'stripe_user[business_name]': req.query.vendor_name || undefined,
       'stripe_user[first_name]': req.query.first_name || undefined,
@@ -47,7 +47,7 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
     //   res.redirect('/pilots/signup');
     // }
     try {
-      console.log("code", req.query)
+      console.log("code", req.body)
       // Post the authorization code to Stripe to complete the Express onboarding flow
       // const expressAuthorized = await request.post({
       //   uri: process.env.STRIPE_TOKEN_URI,
@@ -68,15 +68,24 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
           grant_type: 'authorization_code',
           client_id: process.env.STRIPE_CLIENT_ID,
           client_secret: process.env.STRIPE_SK,
-          code: req.query.code
+          code: req.body.stripeToken
         });
         
-        if(response) {
-          res.send(`User Connected from backend`)
-          console.log("response from token:", response)
+        console.log("response from token:", response)
+        if(!response) {
+          console.log(response.error)
+          res.send("Stripe error: Unable to connect account")
+        } else if (response){
+          res.status(200).send(`User Connected from backend`)
+          console.log("response from token in if:", response)
           const connected_account_id = response.stripe_user_id;
-          console.log()
-          const vendor = await Vendor.updateVendor({stripe_id: connected_account_id})
+          // const vendor = await Vendor.updateVendor({stripe_id: connected_account_id})
+          // if (vendor) {
+          //   console.log(vendor, "udated vendor")
+          //   res.send("vendor updated")
+          // } else {
+          //   res.send("vendor stripe update fail")
+          // }
           console.log("vendor stripe account has been added")
         }
   
@@ -89,35 +98,35 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
   exports.dashboard = async (req, res) => {
     const {stripe_id} = req.body
     console.log(stripe_id)
-    // try {
-    //     // Generate a unique login link for the associated Stripe account to access their Express dashboard
-    //     const loginLink = await stripe.accounts.createLoginLink(
-    //       pilot.stripeAccountId, {
-    //         redirect_url: `http://localhost:${process.env.PORT}` + '/stripe/dashboard'
-    //       }
-    //     );
-    //     // Directly link to the account tab
-    //     if (req.query.account) {
-    //       loginLink.url = loginLink.url + '#/account';
-    //     }
-    //     // Retrieve the URL from the response and redirect the user to Stripe
-    //     return res.redirect(loginLink.url);
-    //   } catch (err) {
-    //     console.log(err);
-    //     console.log('Failed to create a Stripe login link.');
-    //  }
-    stripe.accounts.createLoginLink(
-      stripe_acc_id,
-      function(err, link) {
-        
-        if(err) {
-          console.log(err)
-          res.status(300).json({message: 'Incorrect account', err})
-        } else {
-          res.status(200).json(link)
+    try {
+        // Generate a unique login link for the associated Stripe account to access their Express dashboard
+        const loginLink = await stripe.accounts.createLoginLink(
+          stripe_id, {
+            redirect_url: `${process.env.BACKEND_URL}` + '/stripe/dashboard'
+          }
+        );
+        // Directly link to the account tab
+        if (req.query.account) {
+          loginLink.url = loginLink.url + '#/account';
         }
-      }
-    );
+        // Retrieve the URL from the response and redirect the user to Stripe
+        return res.redirect(loginLink.url);
+      } catch (err) {
+        console.log(err);
+        console.log('Failed to create a Stripe login link.');
+     }
+    // stripe.accounts.createLoginLink(
+    //   stripe_acc_id,
+    //   function(err, link) {
+        
+    //     if(err) {
+    //       console.log(err)
+    //       res.status(300).json({message: 'Incorrect account', err})
+    //     } else {
+    //       res.status(200).json(link)
+    //     }
+    //   }
+    // );
   };
 
   exports.payout =  async (req, res) => {
@@ -127,7 +136,6 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
       const balance = await stripe.balance.retrieve({
         stripe_account: stripe_id,
       });
-      // This demo app only uses USD so we'll just use the first available balance
       // (Note: there is one balance for each currency used in your application)
       const {amount, currency} = balance.available[0];
       // Create an instant payout
