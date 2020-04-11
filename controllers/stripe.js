@@ -63,12 +63,15 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
       // if (expressAuthorized.error) {
       //   throw(expressAuthorized.error);
       // }
+      const {stripe_id, firebase_id} = req.body
+      console.log("code", stripe_id)
+      console.log("firenase", firebase_id)
 
       const response = await stripe.oauth.token({
           grant_type: 'authorization_code',
           client_id: process.env.STRIPE_CLIENT_ID,
           client_secret: process.env.STRIPE_SK,
-          code: req.body.stripeToken
+          code: req.body.stripe_id
         });
         
         console.log("response from token:", response)
@@ -76,10 +79,13 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
           console.log(response.error)
           res.send("Stripe error: Unable to connect account")
         } else if (response){
-          res.status(200).send(`User Connected from backend`)
+          // const vendor = await Vendor.updateVendor(req.body.firebase_id, {stripe_id: response.stripe_user_id})
+          // console.log("vendor from stripe/token", vendor)
+          res.status(200).send(response.stripe_user_id)
           console.log("response from token in if:", response)
-          const connected_account_id = response.stripe_user_id;
-          // const vendor = await Vendor.updateVendor({stripe_id: connected_account_id})
+          // const stripe_id = response.stripe_user_id;
+          
+          // res.redirect(`/http://localhost:3000/vendor/${firebase_id}`)
           // if (vendor) {
           //   console.log(vendor, "udated vendor")
           //   res.send("vendor updated")
@@ -110,7 +116,7 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
           loginLink.url = loginLink.url + '#/account';
         }
         // Retrieve the URL from the response and redirect the user to Stripe
-        return res.redirect(loginLink.url);
+        return res.status(200).json(loginLink.url);
       } catch (err) {
         console.log(err);
         console.log('Failed to create a Stripe login link.');
@@ -130,25 +136,37 @@ exports.token = async (req, res, next) => { //put request to update vendor strip
   };
 
   exports.payout =  async (req, res) => {
+    console.log(req.body, "strope id")
+    console.log(req.body.stripe_id, "stripe_id")
+
     const {stripe_id} = req.body
+    console.log("stripe_id", stripe_id)
+
     try {
       // Fetch the account balance to determine the available funds
       const balance = await stripe.balance.retrieve({
-        stripe_account: stripe_id,
+        stripeAccount: stripe_id,
       });
       // there is one balance for each currency used in application
       const {amount, currency} = balance.available[0];
+      const {pendingAmount} = balance.pending[0];
+
       // Create an instant payout
-      const payout = await stripe.payouts.create(
-        {
-          amount: amount,
-          currency: currency,
-          statement_descriptor: 'PocketShop',
-        },
-        {
-          stripe_account: stripe_id,
-        }
-      );
+      console.log("balance", balance)
+
+      // const payout = await stripe.payouts.create(
+      //   {
+      //     amount: amount,
+      //     currency: currency,
+      //     statement_descriptor: 'PocketShop',
+      //   },
+      //   {
+      //     stripeAccount: stripe_id,
+      //   }
+      // );
+      // console.log("payout", payout)
+
+      res.status(200).json({available: amount, pending: pendingAmount})
     } catch (err) {
       console.log(err);
     }

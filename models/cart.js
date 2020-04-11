@@ -11,7 +11,10 @@ getCartById = id => {
   };
 
   getCustomerCart = id => {
-    return db('cart').innerJoin('user', 'cart.firebase_id', 'user.firebase_id').select('cart.quantity', 'cart.total').where({ 'cart.firebase_id': id });
+    return db('cart')
+    .innerJoin('customer', 'cart.firebase_id', 'customer.firebase_id')
+    .select('cart.quantity', 'cart.total')
+    .where({ 'cart.firebase_id': id });
   };
 
 
@@ -29,6 +32,9 @@ getCartById = id => {
     }
   };
 
+//   addCart = (firebase_id) => {
+//     return db('cart').insert(firebase_id)
+// };
   getCartItems = id => {
     return db('cart_item')
       .innerJoin('product', 'cart_item.product_id', 'product.id')
@@ -47,10 +53,13 @@ getCartById = id => {
         'cart.firebase_id',
         'vendor.stripe_id',
         'cart_item.quantity',
-        'cart.total'
       ])
       .where({ cart_id: id });
   };
+
+  updateCartItem = (id, newQuantity) => {
+    return db('cart_item').where({'cart_item.product_id': id}).update({quantity: newQuantity});
+  }
 
   addProductToCart = (product_id, cart_id) => {
     let addedItem = {
@@ -66,8 +75,10 @@ getCartById = id => {
       ...updatedCart,
      
     }
-    return db('cart').insert(cart)
+    return db('cart').where({'cart.firebase_id': firebase_id}).update(cart)
   }
+
+  
 module.exports = {
     getCart,
     getCartById,
@@ -76,4 +87,5 @@ module.exports = {
     addCart,
     addProductToCart,
     addTotal,
+    updateCartItem,
 }

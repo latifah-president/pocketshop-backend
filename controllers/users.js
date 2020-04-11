@@ -21,15 +21,15 @@ exports.getUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
     try {
-        const {firebase_id, user_type} = req.params;
-        if (!firebase_id) {
-            res.status(400).json(`Unable to find user, check id and user type`);
-        } else {
-
-            const userData = await User.getUserById(firebase_id, user_type);
-            console.log(userData, 'bottom of await')
-            res.status(200).json(userData);
-        } 
+        const {firebase_id} = req.params;
+      if (!firebase_id) {
+          res.status(400).json(`Unable to find customer profile, check id`);
+      } else {
+          console.log(firebase_id,'id')
+          const userData = await User.getUserById(firebase_id)
+          console.log(userData, 'bottom of await from vendor by id')
+          res.status(200).json(userData);
+      }
     } catch(err) {
         res.status(500).json(`Error find user: ${err}`);
         console.log(`error from get user by id: ${err}`)
@@ -38,15 +38,25 @@ exports.getUserById = async (req, res) => {
 
 exports.addUser = async (req, res) => {
     try {
-        const {firebase_id, email, user_type,  first_name, last_name, street_address, city, state, zip, country, phone_number} = req.body;
-        if (!firebase_id || !email || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number  ) {
+        const { email, firebase_id, user_type} = req.body;
+        if (!email || !firebase_id || !user_type) {
             res.status(400).json(`Please enter all input fields`);
         } else {
             const newUser = await User.addUser(req.body);
-            const newCustomer = await Customer.addCustomer(firebase_id);
-            const cart = await Cart.addCart(firebase_id);
-            console.log(newCustomer, 'user from register')
-            res.status(201).json(`Welcome ${first_name}`);
+            if (newUser) {
+                if (user_type === "customer") {
+                    console.log(firebase_id, "firebase id")
+                    const newCustomer = await Customer.addCustomer(firebase_id);
+                    const cart = await Cart.addCart(firebase_id);
+                    console.log(newCustomer, 'customer from register')
+                } else if (user_type === "vendor") {
+                    const newVendor = await Vendor.addVendor(firebase_id)
+                    console.log("newVendor", newVendor)
+                }
+            } 
+            res.status(201).json(`Welcome, thank you for registering`);
+
+            
     } 
  }catch(err) {
         res.status(500).json(`There was an error adding you information`);

@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
         .references('firebase_id')
         .inTable('customer')
         .unique();
-        cart.decimal('total').unsigned().defaultTo(0.00);
+        cart.float('total').unsigned().defaultTo(0.00);
         cart.integer('quantity').defaultTo(0);
     })
   };

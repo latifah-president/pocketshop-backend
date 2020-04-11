@@ -14,7 +14,7 @@ getProductsByVendor = (vendorId) => {
 
 getProductsByVendorName = (vendor_name) => {
     return db('product')
-    .select('product.title', 'product.description', 'product.price', 'product.image_url', 'product.category')
+    .select('product.id', 'product.title', 'product.description', 'product.price', 'product.image_url', 'product.category')
     .where({business_name: vendor_name})
 }
 addProduct = (product) => {

@@ -20,9 +20,9 @@ exports.getVendorById = async (req, res) => {
           res.status(400).json(`Unable to find customer profile, check id`);
       } else {
           console.log(firebase_id,'id')
-          const customerData = await Vendor.getVendorById(firebase_id)
-          console.log(customerData, 'bottom of await from vendor by id')
-          res.status(200).json(customerData);
+          const vendorData = await Vendor.getVendorById(firebase_id)
+          console.log(vendorData, 'bottom of await from vendor by id')
+          res.status(200).json(vendorData);
       }
   } catch(err) {
       res.status(500).json(`Error find customerr: ${err}`);
@@ -32,11 +32,10 @@ exports.getVendorById = async (req, res) => {
 
 exports.addVendor = async (req, res) => {
   try {
-      const {firebase_id, email, user_type,  first_name, last_name, street_address, city, state, zip, country, phone_number, vendor_name} = req.body;
+      const {firebase_id, first_name, last_name, street_address, city, state, zip, country, phone_number, vendor_name} = req.body;
       const userData = {
-        firebase_id, 
-        email, 
-        user_type,  
+        // user_type,  
+        
         first_name, 
         last_name, 
         street_address, 
@@ -46,36 +45,48 @@ exports.addVendor = async (req, res) => {
         country, 
         phone_number
       }
-      console.log("userData:", userData.phone_number)
-      if (!firebase_id || !email || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number || !vendor_name ) {
+      console.log("userData:", userData)
+      if (!firebase_id  || !vendor_name) {
+
+      // if (!firebase_id || !email || !user_type || !first_name || !last_name || !street_address || !city || !state || !zip || !country || !phone_number || !vendor_name ) {
           res.status(404).json(`Please enter all input fields`);
-      } else {
-          const newUser = await User.addUser(userData);
-        if(newUser) {
-          const newVendor = await Vendor.addVendor(firebase_id, vendor_name);
+      } else  {
+         
           
-          console.log(newVendor, 'user from vendor register')
-        }
-        res.status(201).json(`Welcome ${first_name}`);
+          const newVendor = await Vendor.registerVendor(firebase_id, req.body.vendor_name);
+          const updatedUser = await User.updateUser(firebase_id, userData)
+          // console.log("new vendor error:", newVendor.error)
+          console.log(updatedUser, 'user from vendor register')
+        
+        res.status(201).json(`Welcome ${vendor_name}`);
 
   } 
 }catch(err) {
-      res.status(500).json(`There was an error adding you information`);
-      console.log(`error from addUser: ${err}`)
+  if(err.code === 23505) {
+    res.status(400).json("There is a vednor by another name")
+  } else {
+    res.status(500).json(`There was an error adding you information`);
+    console.log(`error from addVendor: ${err}`)
+  }
+      
   }
 };
 
   exports.updateVendor = async (req, res) => {
       try {
-        const changes = req.body;
+        // const {changes} = req.body;
         const {firebase_id} = req.params;
-        if (!changes || !firebase_id) {
+        console.log("stripe changes from frontend", firebase_id)
+
+        console.log("stripe changes from frontend", req.body.changes)
+        if (!firebase_id) {
             res.status(404).json(`Vendor information was not updated`);
         } else {
-            const vendor = await Vendor.updateVendor(firebase_id, changes);
-
+            const vendor = await Vendor.updateVendor(firebase_id, req.body.changes);
             console.log(vendor)
-            res.status(200).json(vendor);
+            console.log("stripe changes from frontend bottom", req.body.changes)
+
+            res.status(200).json(req.body);
         }
       } catch (err) {
         res.status(500).json(`error updating vendor: ${err}`);

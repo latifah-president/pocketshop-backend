@@ -12,9 +12,10 @@ exports.getCustomerById = async (req, res) => {
             // const userData = await User.getUserById(firebase_id);
             const customerData = await Customer.getCustomerById(firebase_id)
             const customerCart = await Cart.getCustomerCart(firebase_id)
+            const cartItem = await Cart.getCartItems(firebase_id)
 
-            console.log(customerData, 'bottom of await')
-            res.status(200).json([customerData, customerCart]);
+            console.log(customerCart, 'bottom of await')
+            res.status(200).json({customerData, cartItem, customerCart});
         }
     } catch(err) {
         res.status(500).json(`Error find customerr: ${err}`);
@@ -50,17 +51,56 @@ exports.getCartById = async (req, res, next) => {
 
 exports.addToCart = async (req, res, next) => {
     try {
-        //first get cart
-        //if cart
+        //first get cartItems
+        //loop through and if cartItems includes the product_id
+        //increase the quantity
         const cart_id = req.params.id; //CART_ID IS THE FIREBASE_ID OF THE USER
         
-        const {product_id} = req.body;
+        const {product_id, } = req.body;
         console.log(req.body, 'product from add to cart')
-        const cartItems = await Cart.getCartItems(cart_id);
+        const cartItems = await Cart.getCartItems(cart_id); //get uset caer
 
-        const addedStall = await Cart.addProductToCart(product_id, cart_id)
-        console.log("Sucessful adding of product: one item in cart");
-        res.status(201).json(`Product added`)
+        let quantity = 1
+        // console.log(quantity, 'cart quanitity')
+
+       
+        if (product_id) {
+        // let updateQuantity = cartItems.includes(product_id)
+        // let updateQuantity =  cartItems.find(
+        //     function(el) {
+        //         if (el.product_id === product_id){
+        //             return true
+
+        //         } else return
+        //     }
+        //   );
+        // let updateQuantity = cartItems.find(item => {
+        //     if( product_id === item.product_id) {
+        //         quantity += 1
+        //         console.log(quantity)
+        //     }
+           
+        // })
+
+        //     console.log("updated quantity " , updateQuantity)
+
+        //     if (updateQuantity) {
+        //         quantity += 1
+        //         console.log("below new quantity:", quantity)
+        //         const updatedCartItem = await Cart.updateCartItem(product_id, quantity)
+        //     } else {
+                const addedProducts = await Cart.addProductToCart(product_id, cart_id)
+                console.log("Sucessful adding of product: one item in cart");
+                res.status(201).json(`Product added`)
+            //}
+           
+
+
+        } else {
+            res.status(404).json(`Product not added`)
+        }
+       
+      
         // if(cartItems.length == 0) {
         //         const addedStall = await Cart.addProductToCart(product_id, cart_id)
         //         console.log("Sucessful adding of stall: one item in cart");
