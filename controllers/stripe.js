@@ -19,7 +19,9 @@ exports.authorize = (req, res) => {
     // Optionally, the Express onboarding flow accepts `first_name`, `last_name`, `email`,
     // and `phone` in the query parameters: those form fields will be prefilled
     parameters = Object.assign(parameters, {
-      redirect_uri: `https://pocket-shop.herokuapp.com/` + '/stripe/token',
+      // redirect_uri: `https://pocket-shop.herokuapp.com/` + '/stripe/token',
+      redirect_uri: `http://localhost:8585` + '/stripe/token',
+
       'stripe_user[business_type]': req.query.type || 'individual',
       'stripe_user[business_name]': req.query.vendor_name || undefined,
       'stripe_user[first_name]': req.query.first_name || undefined,

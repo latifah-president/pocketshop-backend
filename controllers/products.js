@@ -9,7 +9,7 @@ exports.getProductsByVendor = async (req, res) => {
         } else {
           const productsData = await Products.getProductsByVendorName(vendor_name);
           if (productsData.length === 0) {
-            res.status(404).json(`${vendor_name} has not added any products`)
+            res.status(404).json({errorMessage: `${vendor_name} has not added any products`})
           } else {
             console.log("Products Data:", productsData);
             res.status(200).json(productsData);

@@ -38,8 +38,8 @@ exports.getUserById = async (req, res) => {
 
 exports.addUser = async (req, res) => {
     try {
-        const { email, firebase_id, user_type} = req.body;
-        if (!email || !firebase_id || !user_type) {
+        const { first_name, last_name, email, firebase_id, user_type} = req.body;
+        if (!first_name  || !last_name || !email || !firebase_id || !user_type) {
             res.status(400).json(`Please enter all input fields`);
         } else {
             const newUser = await User.addUser(req.body);
